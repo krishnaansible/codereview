@@ -1,0 +1,32 @@
+---
+- name: "App deployment using Ansible"
+  hosts: default
+  ignore_unreachable: yes
+
+  vars:
+    ruby_build: ~/.rbenv/plugins/ruby-build/ruby-build
+    rubyversion: 2.6.6
+    railsversion: 6.0.3.4
+    yarnversion: 1.22.5
+    bundlerversion: 2.1.4
+    sidekiqversion: 6.1.2
+
+
+  
+  tasks:
+    #- include_role:
+    #      name: newuser
+    - include_role:
+          name: common
+    - include_role:
+          name: ruby
+    - include_role:
+          name: apache
+    - include_role:
+          name: passenger
+    - include_role:
+          name: nodejs
+    - include_role:
+          name: yarn
+    - include_role:
+          name: redis

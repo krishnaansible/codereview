@@ -1,0 +1,2 @@
+[default]
+52.87.156.121 ansible_ssh_port=22 ansible_user=ubuntu

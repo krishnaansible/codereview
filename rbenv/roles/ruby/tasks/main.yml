@@ -1,0 +1,41 @@
+---
+ - name: coping the ruby script
+   copy: src=rubyinstall.sh dest=/tmp
+
+ - name: Install Ruby {{ rubyversion }} .Installation will take 15min
+   shell: sh /tmp/rubyinstall.sh {{ rubyversion }}
+   ignore_errors: True
+   async: 900
+   poll: 60 
+
+ - name: Making ruby installtion global
+   command: ~/.rbenv/bin/rbenv global {{ rubyversion }}
+
+ - name: Adding Gem path
+   lineinfile:
+    path: ~/.bashrc
+    line: export PATH="$HOME/.rbenv/shims:$PATH"
+
+ - name: Installing gems
+   community.general.gem:
+       name: bundler
+       version: 2.1.4
+
+ - name: Running rbenv rehash command
+   command: >
+        ~/.rbenv/bin/rbenv rehash
+
+ - name: Instllaing Rails
+   community.general.gem:
+       name: rails
+       version: 6.0.3.1
+   ignore_unreachable: yes
+
+ - name: make Rails executable
+   command: ~/.rbenv/bin/rbenv rehash
+
+ - name: Installing bundler
+   community.general.gem:
+       name: sidekiq
+       version: 6.1.2
+   

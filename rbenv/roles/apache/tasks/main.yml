@@ -1,0 +1,10 @@
+---
+ - name: Installing Apache
+   apt: name={{ item }} state=present 
+   become: yes
+   with_items:
+    - apache2
+    - dirmngr
+    - gnupg
+    - apt-transport-https 
+    - ca-certificates

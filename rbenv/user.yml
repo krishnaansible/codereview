@@ -1,0 +1,29 @@
+---
+ - name: "Creating rimadmin user"
+   hosts: default
+   ignore_unreachable: yes
+   tasks:
+      - name: Add the user 'rimadmin' with a specific uid and a primary group of 'admin'
+        user:
+          name: rimadmin
+          comment: rimadmin
+          shell: /bin/bash
+          groups: admin
+        become: yes
+      - name: Adding to sudo
+        lineinfile:
+          path: /etc/sudoers
+          state: present
+          regex: '^%sudo'
+          line: 'rimadmin ALL=(ALL) NOPASSWD:ALL'
+          validate: 'visudo -cf %s'
+        become: yes
+      - name: Generating ssh key for rimadmin user
+        shell: |
+             sudo runuser -l rimadmin -c 'echo -e "\n"|ssh-keygen -t rsa -N ""'
+             sudo cp /home/ubuntu/.ssh/authorized_keys /home/rimadmin/.ssh/
+             sudo chown rimadmin.rimadmin /home/rimadmin/.ssh/authorized_keys
+
+     
+
+

@@ -1,0 +1,22 @@
+---
+  - name: Adding key
+    apt_key:
+      keyserver: keyserver.ubuntu.com
+      id: 561F9B9CAC40B2F7
+    become: yes
+  - name: Adding Passenger repository
+    apt_repository:
+      repo: deb https://oss-binaries.phusionpassenger.com/apt/passenger bionic main
+      filename: /etc/apt/sources.list.d/passenger.list
+      update_cache: yes
+      state: present
+    become: yes
+
+  - name: Installing Apache+Passenger Module
+    apt: 
+      name: libapache2-mod-passenger
+    become: yes
+
+
+
+

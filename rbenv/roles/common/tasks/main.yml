@@ -1,0 +1,90 @@
+---
+#This playbook runs all the common plays in the deployment
+- name: Update all the packages
+  apt: 
+    name: "*"
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: Installing rben dependencies
+  apt: name={{ item }} state=present 
+  become: yes
+  with_items:
+   - autoconf 
+   - bison 
+   - build-essential 
+   - libssl-dev 
+   - libyaml-dev
+   - libreadline6-dev 
+   - zlib1g-dev 
+   - libncurses5-dev 
+   - libffi-dev 
+   - libgdbm5 
+   - libgdbm-dev
+
+- name: Cloneing and Installing rbenv
+  git:
+    repo: 'https://github.com/rbenv/rbenv.git'
+    dest: ~/.rbenv
+
+- name: Updating environemnt
+  lineinfile:
+    path: ~/.bashrc
+    line: export PATH="$HOME/.rbenv/bin:$PATH"
+
+- name: Adding Gem path
+  lineinfile:
+    path: ~/.bashrc
+    line: export PATH="$HOME/.rbenv/shims:$PATH"
+
+- name: Adding rbenv init in .bashrc
+  lineinfile:
+    path: ~/.bashrc
+    line: eval "$(rbenv init -)"
+
+- name: Cloneing ruby-build
+  git:
+    repo: 'https://github.com/rbenv/ruby-build.git' 
+    dest: ~/.rbenv/plugins/ruby-build
+
+#- name: installing ruby-build
+#  command: sh ~/.rbenv/plugins/ruby-build/install.sh
+#  become: yes
+
+- name: Updating ruby-build environemnt
+  lineinfile:
+    path: ~/.bashrc
+    line: export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"
+
+- name: Checking ruby versions
+  command: ~/.rbenv/bin/rbenv install -l * 2>&1|grep -v 'stable'|grep -v 'install'|head -1
+  register: versioncheck
+
+- debug:
+    var: versioncheck.stdout
+
+  become_user: rimadmin
+
+#- name: Installing ruby "{{ rubyversion }}"
+#  command: ~/.rbenv/bin/rbenv install "{{ rubyversion }}"
+#  environment: "{{ ruby_build }}"
+#  register: results
+#  ignore_errors: yes
+
+#- debug:
+#    var: results
+
+#- name: Installing packages for ruby after ruby installation
+#  apt: name={{ item }} state=present
+#  become: yes
+#  with_items:
+#    - libreadline-dev
+#    - Zlib1g-dev
+#  when: results.rc != 0
+
+
+
+
+
+    

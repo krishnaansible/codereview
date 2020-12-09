@@ -1,0 +1,24 @@
+---
+ - name: Installing Redis
+   apt: 
+    name: redis
+    state: present
+ #   register: results
+   become: yes
+#   notify:
+#     - Restart redis-server
+
+ - name: Installed Redis version
+   command: redis-server -v
+
+ - name: start Redis service
+   systemd:
+     state: started
+     name: redis-server
+
+
+#   handlers:
+#     - name: Restart redis-server
+#       ansible.builtin.service:
+#         name: redis-server
+#         state: restarted
